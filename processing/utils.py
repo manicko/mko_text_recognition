@@ -2,6 +2,7 @@ from pickle import FALSE
 
 from hunspell import Hunspell
 
+
 LANG_MAP = {
     "uzb_cyrl": "uz",  # Узбекский (кириллица)
     "bs": "bs_BA",  # Боснийский

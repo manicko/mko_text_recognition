@@ -200,5 +200,6 @@ def translate_files(path_in='data/in', path_out='data/out', lang_from="srp", ext
             print("Все тексты сохранены в общий файл: combined_document.docx")
 
 
+
 if __name__ == '__main__':
     translate_files(lang_from='srp_latn', save_as_one=True)
