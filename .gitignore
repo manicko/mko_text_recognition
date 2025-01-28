@@ -33,6 +33,8 @@ wheels/
 
 *config.yaml
 *logs*
+data/in/
+data/out/
 
 !/data/in/git_keep.txt
 !/data/out/git_keep.txt

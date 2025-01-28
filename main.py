@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 
 
-from processing.utils import spellcheck_with_hunspell
+# from processing.utils import spellcheck_with_hunspell
 
 
 def deskew_image3(image):
@@ -37,11 +37,11 @@ def process_image3(image_path, output_path):
         image = ImageOps.exif_transpose(image)  # Correct orientation using EXIF data
         image = image.convert("L")    # Приведение в градации серого
         image =ImageOps.autocontrast(image) # Нормализация яркости
-        image = ImageEnhance.Brightness(image).enhance(1.2)  # Slightly increase brightness
-        image = ImageEnhance.Contrast(image).enhance(1.1) # Усиление контраста
-        image = image.filter(ImageFilter.MedianFilter(size=3)) # Удаление шума
-        image = ImageEnhance.Sharpness(image).enhance(2.0)  # Sharpen
-        image = image.point(lambda x: 255 if x > 128 else 0, mode="1") # Бинаризация
+        image = ImageEnhance.Brightness(image).enhance(1.05)  # Slightly increase brightness
+        image = ImageEnhance.Contrast(image).enhance(1.05) # Усиление контраста
+        image = image.filter(ImageFilter.MedianFilter(size=1)) # Удаление шума
+        image = ImageEnhance.Sharpness(image).enhance(1.2)  # Sharpen
+        # image = image.point(lambda x: 255 if x > 128 else 0, mode="1") # Бинаризация
         image = deskew_image3(image) # Выравнивание текста
 
         # Сохранение результата
@@ -157,7 +157,7 @@ def process_image(image_path, output_path):
 
 
 
-def translate_files(path_in='data/in', path_out='data/out', lang_from="srp", ext='jpg', save_as_one=False):
+def translate_files(path_in='data/in', path_out='data/out', lang_from="srp", ext='jpeg', save_as_one=False):
     """Обрабатывает изображения из папки и сохраняет текст и обработанные изображения."""
     path_in = Path(path_in)
     path_out = Path(path_out)
@@ -169,7 +169,7 @@ def translate_files(path_in='data/in', path_out='data/out', lang_from="srp", ext
         print(f'Обработка файла {file}')
 
         # Обработка изображения
-        processed_image = process_image(file, path_out)
+        processed_image = process_image3(file, path_out)
         if processed_image is None:
             continue
         try:
@@ -179,12 +179,12 @@ def translate_files(path_in='data/in', path_out='data/out', lang_from="srp", ext
             #           f'-c preserve_interword_spaces=1')
             text = pytesseract.image_to_string(processed_image, lang=lang_from)
 
-            corrected_text = spellcheck_with_hunspell(text, lang_from=lang_from)
+            # corrected_text = spellcheck_with_hunspell(text, lang_from=lang_from)
 
 
             if save_as_one:
                 combined_doc.add_paragraph(f"File: {file.name}\n")
-                combined_doc.add_paragraph(corrected_text)
+                combined_doc.add_paragraph(text)
                 combined_doc.add_paragraph("\n---\n")
             else:
                 doc = Document()
@@ -201,4 +201,4 @@ def translate_files(path_in='data/in', path_out='data/out', lang_from="srp", ext
 
 
 if __name__ == '__main__':
-    translate_files(lang_from='srp_latn', save_as_one=False)
+    translate_files(lang_from='srp_latn', save_as_one=True)
